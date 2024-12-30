@@ -29,11 +29,12 @@ class ListApprovalChains extends ListRecords
         $userRole = User::query()->where('id', $userId)->first()->roles->first()->name;
 
         if ($userRole === 'Default role') {
-            return ApprovalChainStep::whereHas('user', function (Builder $query) use ($userId) {});
+            return ApprovalChainStep::whereHas('user', function (Builder $query) use ($userId) {})
+                ->orderBy('approval_chain_id')->orderBy('step_order');
         }
 
         return ApprovalChainStep::whereHas('user', function (Builder $query) use ($userId) {
             $query->where('id', $userId);
-        });
+        })->orderBy('approval_chain_id');
     }
 }

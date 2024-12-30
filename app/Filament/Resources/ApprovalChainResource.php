@@ -66,6 +66,12 @@ class ApprovalChainResource extends Resource
                     ->sortable()
                     ->searchable(),
 
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label(__('User name'))
+                    ->visible(fn() => auth()->user()->roles->first()->name === 'Default role')
+                    ->sortable()
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('approved')
                     ->label(__('Project status'))
                     ->formatStateUsing(fn($record) => new HtmlString('
@@ -75,6 +81,12 @@ class ApprovalChainResource extends Resource
                             <span>' . ($record->approved == 1 ? 'Approved' : 'Not Approved') . '</span>
                         </div>
                     '))
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('approved_at')
+                    ->label(__('Approved At'))
+                    ->dateTime('d-m-Y H:i') // Format the date and time
                     ->sortable()
                     ->searchable(),
             ])
