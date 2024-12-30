@@ -121,30 +121,4 @@ class ApprovalChainResource extends Resource
             'edit' => Pages\EditApprovalChain::route('/{record}/edit'),
         ];
     }
-
-    protected static function approveAndForwardStep(ApprovalChainStep $step): void
-    {
-        // Approve the current step
-        $step->update(['approved' => 1]);
-
-        $nextStep = ApprovalChainStep::where('approval_chain_id', $step->approval_chain_id)
-            ->where('step_order', '>', $step->step_order)
-            ->orderBy('step_order', 'asc')
-            ->first();
-
-        if (!$nextStep) {
-
-            $allStepsApproved = ApprovalChainStep::where('approval_chain_id', $step->approval_chain_id)
-                ->where('approved', 0)
-                ->doesntExist();
-
-            if ($allStepsApproved) {
-                // project for the approval chain that is being approved;
-                $project = Project::find($step->approvalChain->project_id);
-
-                // Update the project status to approved
-                $project->update(['status_id' => 2]);
-            }
-        }
-    }
 }
