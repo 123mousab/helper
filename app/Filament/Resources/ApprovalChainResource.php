@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ApprovalChainResource\Pages;
+use App\Filament\Resources\ApprovalChainResource\Pages\ApproveAndForwardAction;
 use App\Filament\Resources\ApprovalChainResource\RelationManagers;
 use App\Models\ApprovalChain;
 use App\Models\ApprovalChainStep;
@@ -84,30 +85,7 @@ class ApprovalChainResource extends Resource
                     ->options(fn() => Project::all()->pluck('name', 'id')->toArray()),
             ])
             ->actions([
-                Tables\Actions\Action::make('approveAndForward')
-                    ->label(__('Approve'))
-                    ->icon(function ($record) {
-                        // Show a checkmark icon if the step is already approved
-                        return $record->approved ? 'heroicon-o-check' : 'heroicon-o-arrow-right';
-                    })
-                    ->color(function ($record) {
-                        // Change the button color to green if the step is already approved
-                        return $record->approved ? 'success' : 'primary';
-                    })
-                    ->disabled(function ($record) {
-                        // Get the current step (the first unapproved step in the chain)
-                        $currentStep = ApprovalChainStep::where('approval_chain_id', $record->approval_chain_id)
-                            ->where('approved', 0)
-                            ->orderBy('step_order', 'asc')
-                            ->first();
-
-                        // Disable the button if this is not the current step or the user is not the approver
-                        return !($currentStep && $record->id === $currentStep->id && $record->user_id === auth()->id());
-                    })
-                    ->action(function ($record) {
-                        // Approve the current step and move to the next step
-                        static::approveAndForwardStep($record);
-                    }),
+                ApproveAndForwardAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
