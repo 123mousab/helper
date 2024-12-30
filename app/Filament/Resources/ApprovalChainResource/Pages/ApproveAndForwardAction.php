@@ -33,7 +33,7 @@ class ApproveAndForwardAction extends Action
 
     protected static function approveAndForwardStep(ApprovalChainStep $step): void
     {
-        $step->update(['approved' => 1]);
+        $step->update(['approved' => 1, 'approved_at' => now()]);
 
         $nextStep = ApprovalChainStep::where('approval_chain_id', $step->approval_chain_id)
             ->where('step_order', '>', $step->step_order)

@@ -14,6 +14,11 @@ class ApprovalChainStep extends Model
         'user_id',
         'step_order',
         'approved',
+        'approved_at',
+    ];
+
+    protected $dates = [
+        'approved_at',
     ];
 
     public function approvalChain()
